@@ -47,94 +47,118 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            <a class="nav-link" href="#employee-dashboard">
+                            <a class="nav-link" href="#admin-dashboard">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                            <a class="nav-link" href="#employee-items-list">
+                            <a class="nav-link" href="#admin-items-list-man">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Office Items List 
+                                Items List Management 
                             </a>
-                            <a class="nav-link" href="#employee-expense-tracking">
+                            <a class="nav-link" href="#admin-expense-tracking">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Expense Tracking
                             </a>
-                            <a class="nav-link" href="#employee-hours-tracking">
+                            <a class="nav-link" href="#admin-employee-management">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Hours Tracking
+                                Employee Management
                             </a>
                             
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Bakir Hamzic
+                        Admin
                     </div>
                 </nav>
             </div>
             <div id="layoutSidenav_content">
               <main>
                 <div class="container mt-5">
-                    <h2>Weekly Hours Tracking</h2>
-
-                    <div class="mb-3">
-                        <h5>Weekly number of hours: <span>35</span></h5>
-                    </div>
+                    <h2>Employee List Management</h2>
                 
-                    <div class="card mb-4">
-                        <div class="card-header">Add Hours for a Specific Day</div>
+                    <!-- Form for adding a new employee -->
+                    <div class="card mb-3">
+                        <div class="card-header">Add New Employee</div>
                         <div class="card-body">
-                            <form class="row g-3 align-items-center">
-                                <div class="col-auto">
-                                    <label for="dateInput" class="col-form-label">Date</label>
+                            <form class="row g-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="Name" aria-label="Name">
                                 </div>
-                                <div class="col-auto">
-                                    <input type="date" id="dateInput" class="form-control">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="Position" aria-label="Position">
                                 </div>
-                                <div class="col-auto">
-                                    <input type="number" class="form-control" placeholder="Hours" aria-label="Hours">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="Office" aria-label="Office">
                                 </div>
-                                <div class="col-3">
-                                    <button type="button" class="btn btn-primary">Add Hours</button>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="Working Hours" aria-label="Working Hours">
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary">Add Employee</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 
+                    <!-- Table of employees -->
                     <div class="card">
                         <div class="card-header">
-                            Your Hours This Week
+                            <i class="fas fa-table me-1"></i>
+                            Employee List
                         </div>
                         <div class="card-body">
-                            <table class="table">
+                            <table id="employeeTable" class="table">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Day</th>
-                                        <th>Hours</th>
-                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Office</th>
+                                        <th>Working Hours</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>2025-03-07</td>
-                                        <td>Tuesday</td>
-                                        <td>8</td>
-                                        <td><button type="button" class="btn btn-info btn-sm">Update</button></td>
+                                        <td>Bakir</td>
+                                        <td>System Architect</td>
+                                        <td>023</td>
+                                        <td>61</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info">Update Hours</button>
+                                            <button type="button" class="btn btn-danger">Delete User</button>
+                                        </td>
+                                        
+
                                     </tr>
                                     <tr>
-                                        <td>2025-03-08</td>
-                                        <td>Wednesday</td>
-                                        <td>6</td>
-                                        <td><button type="button" class="btn btn-info btn-sm">Update</button></td>
+                                        <td>Tarik</td>
+                                        <td>Accountant</td>
+                                        <td>321</td>
+                                        <td>40</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info">Update Hours</button>
+                                            <button type="button" class="btn btn-danger">Delete User</button>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Muhamed</td>
+                                        <td>Junior Author</td>
+                                        <td>123</td>
+                                        <td>43</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info">Update Hours</button>
+                                            <button type="button" class="btn btn-danger">Delete User</button>
+                                        </td>
+
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                </main>
-                
+            </main>
              
                 
                 <footer class="py-4 bg-light mt-auto">
