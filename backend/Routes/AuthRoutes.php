@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/../controllers/AuthController.php';
+
+Flight::route('POST /auth/login', ['AuthController', 'login']);
+Flight::route('POST /auth/logout', ['AuthController', 'logout']);
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
