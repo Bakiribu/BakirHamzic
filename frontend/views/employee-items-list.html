@@ -162,4 +162,24 @@
             </div>
         </div>
         </body>
+        <h2>Items:</h2>
+<ul id="item-list"></ul>
+
+<script src="assets/js/Api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('item-list')) {
+        fetchItems().then(data => {
+            const itemList = document.getElementById('item-list');
+            itemList.innerHTML = '';
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name + ' - ' + item.unit_price;
+                itemList.appendChild(li);
+            });
+        }).catch(error => console.error('Error fetching items:', error));
+    }
+});
+</script>
+
 </html>

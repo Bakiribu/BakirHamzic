@@ -79,10 +79,8 @@
             </div>
             <div id="layoutSidenav_content">
                 <main id="spapp" role="main">
-                    <section id="admin-dashboard" data-load="admin-dashboard.html"></section>
-                    <section id="admin-items-list-man" data-load="admin-items-list-man.html"></section>
-                    <section id="admin-expense-tracking" data-load="admin-expense-tracking.html"></section>
-                    <section id="admin-employee-management" data-load="admin-employee-management.html"></section>
+                    
+                    <div id="main-content"></div>
                     
 
                   </main>
@@ -98,12 +96,30 @@
         </div>
         <script>
             
-let app = $.spapp ({
-    defaultView  : "#admin-employee-management",
-    templateDir: "./views/",
-});
+window.addEventListener("hashchange", loadContent);
 
-app.run();
+function loadContent() {
+    const page = window.location.hash.substring(1);
+    if (page) {
+        fetch(`views/${page}.html`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('main-content').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+                document.getElementById('main-content').innerHTML = '<p>Error loading page.</p>';
+            });
+    } else {
+        fetch('views/admin-dashboard.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('main-content').innerHTML = html;
+            });
+    }
+}
+
+loadContent();
         </script>
         </body>
         
