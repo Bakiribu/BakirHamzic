@@ -5,11 +5,11 @@ if (!role) {
   window.location.href = 'index.html';
 }
 
-if (window.location.pathname.includes('admin-dashboard.html') && role !== 'admin') {
+if (window.location.pathname.includes('#admin-dashboard') && role !== 'admin') {
   alert('You do not have access to this page!');
   window.location.href = 'index.html';
 }
-if (window.location.pathname.includes('employee-dashboard.html') && role !== 'employee') {
+if (window.location.pathname.includes('#employee-dashboard') && role !== 'employee') {
   alert('You do not have access to this page!');
   window.location.href = 'index.html';
 }
