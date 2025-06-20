@@ -9,22 +9,26 @@ class ExamService {
         $this->dao = new ExamDao();
     }
 
-    //  Samo prosljeđuje poziv da dohvati sve kupce
+    //  Samo prosljeđuje poziv da dohvati sve kupce, Implement service method to get all customers
+
     public function get_customers(){
         return $this->dao->get_customers();
     }
 
-    //  Prosljeđuje poziv da dohvati obroke jednog kupca
+    //  Prosljeđuje poziv da dohvati obroke jednog kupca, Implement service method to get all customer meals
+
     public function get_customer_meals($customer_id){
         return $this->dao->get_customer_meals($customer_id);
     }
 
-    //  Prosljeđuje poziv za dodavanje novog kupca
+    //  Prosljeđuje poziv za dodavanje novog kupca,    * Implement service method to add customer to the database
+
     public function add_customer($customer){
         return $this->dao->add_customer($customer);
     }
 
-    // Prosljeđuje poziv za izvještaj o hrani sa paginacijom
+    // Prosljeđuje poziv za izvještaj o hrani sa paginacijom, Implement service method to return detailed list of foods
+    * and total of nutrients for each food
     public function foods_report($limit, $offset){
         return $this->dao->get_foods_report($limit, $offset);
     }
