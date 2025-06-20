@@ -1,0 +1,41 @@
+<?php
+require_once __DIR__."/services/ExamService.php";
+
+//  1. Test konekcije → /connection-check
+// Ovo se samo koristi da vidiš da li si uspješno povezan s bazom
+Flight::route('GET /connection-check', function(){
+    $dao = new ExamDao();
+});
+
+//  2. Vrati sve kupce → /customers
+// Ovo se koristi npr. za <select> listu na frontendu
+Flight::route('GET /customers', function(){
+    $service = new ExamService();
+    Flight::json($service->get_customers());
+});
+
+//  3. Vrati jela jednog kupca → /customer/meals/2
+// Korisno kad želiš prikazati sve obroke za datog kupca
+Flight::route('GET /customer/meals/@customer_id', function($customer_id){
+    $service = new ExamService();
+    Flight::json($service->get_customer_meals($customer_id));
+});
+
+//  4. Dodaj novog kupca → /customers/add (POST)
+// Forma šalje podatke (ime, prezime, datum rođenja), ti ih upišeš u bazu
+Flight::route('POST /customers/add', function() {
+    $service = new ExamService();
+    $data = Flight::request()->data->getData(); // uzima podatke iz forme
+    Flight::json($service->add_customer($data));
+});
+
+//  5. Izvještaj o hrani → /foods/report?page=1
+// Vrati 10 po stranici (ime, brend, slika, kalorije, proteini, masti…)
+Flight::route('GET /foods/report', function(){
+    $page = Flight::request()->query['page'] ?? 1;
+    $pageSize = 10;
+    $offset = ($page - 1) * $pageSize;
+
+    $service = new ExamService();
+    Flight::json($service->foods_report($pageSize, $offset));
+});
