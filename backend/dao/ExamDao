@@ -1,0 +1,71 @@
+<?php
+
+class ExamDao {
+    public $conn;
+
+    //  Konstruktor: Povezivanje s bazom (radi se SAMO jednom)
+    public function __construct(){
+        try {
+            $host = 'localhost';
+            $dbname = 'your_database';
+            $port = 3306;
+            $username = 'root';
+            $password = '';
+
+            $this->conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            echo "Connected successfully"; // vidi se na /connection-check
+        } catch(PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
+        }
+    }
+
+    //  Dohvata sve kupce iz tabele `customers`
+    public function get_customers(){
+        $stmt = $this->conn->prepare("SELECT * FROM customers");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //  Dohvata obroke za jednog kupca — koristi JOIN između meals i foods
+    public function get_customer_meals($customer_id){
+        $stmt = $this->conn->prepare("
+            SELECT f.name AS food_name, f.brand AS food_brand, m.meal_date
+            FROM meals m
+            JOIN foods f ON m.food_id = f.id
+            WHERE m.customer_id = :id
+        ");
+        $stmt->bindParam(':id', $customer_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //  Dodaje novog kupca (INSERT INTO customers)
+    public function add_customer($data){
+        $stmt = $this->conn->prepare("
+            INSERT INTO customers (first_name, last_name, birth_date)
+            VALUES (:first_name, :last_name, :birth_date)
+        ");
+        $stmt->bindParam(':first_name', $data['first_name']);
+        $stmt->bindParam(':last_name', $data['last_name']);
+        $stmt->bindParam(':birth_date', $data['birth_date']);
+        $stmt->execute();
+
+        $data['id'] = $this->conn->lastInsertId(); // dodaj ID u povratni rezultat
+        return $data;
+    }
+
+    //  Dohvata hranu sa podacima o nutrijentima (paginirano)
+    public function get_foods_report($limit, $offset){
+        $stmt = $this->conn->prepare("
+            SELECT name, brand, image, energy, protein, fat, fiber, carbs
+            FROM foods
+            LIMIT :limit OFFSET :offset
+        ");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+?>
