@@ -1,0 +1,32 @@
+<?php
+require_once __DIR__."/../dao/ExamDao.php";
+
+class ExamService {
+    public $dao;
+
+    //  Povezuje se s DAO-om (ovo se koristi u svakoj ruti)
+    public function __construct(){
+        $this->dao = new ExamDao();
+    }
+
+    //  Samo prosljeđuje poziv da dohvati sve kupce
+    public function get_customers(){
+        return $this->dao->get_customers();
+    }
+
+    //  Prosljeđuje poziv da dohvati obroke jednog kupca
+    public function get_customer_meals($customer_id){
+        return $this->dao->get_customer_meals($customer_id);
+    }
+
+    //  Prosljeđuje poziv za dodavanje novog kupca
+    public function add_customer($customer){
+        return $this->dao->add_customer($customer);
+    }
+
+    // Prosljeđuje poziv za izvještaj o hrani sa paginacijom
+    public function foods_report($limit, $offset){
+        return $this->dao->get_foods_report($limit, $offset);
+    }
+}
+?>
