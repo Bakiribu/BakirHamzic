@@ -3,7 +3,13 @@
 class ExamDao {
     public $conn;
 
-    //  Konstruktor: Povezivanje s bazom (radi se SAMO jednom)
+    //  Konstruktor: Povezivanje s bazom (radi se SAMO jednom),/** TODO
+           * List parameters such as servername, username, password, schema. Make sure to use appropriate port
+           */
+
+          /** TODO
+           * Create new connection
+           */
     public function __construct(){
         try {
             $host = 'localhost';
@@ -20,14 +26,16 @@ class ExamDao {
         }
     }
 
-    //  Dohvata sve kupce iz tabele `customers`
+    //  Dohvata sve kupce iz tabele `customers`,     * Implement DAO method used to get customer information
+
     public function get_customers(){
         $stmt = $this->conn->prepare("SELECT * FROM customers");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    //  Dohvata obroke za jednog kupca — koristi JOIN između meals i foods
+    //  Dohvata obroke za jednog kupca — koristi JOIN između meals i foods,     * Implement DAO method used to get customer meals
+
     public function get_customer_meals($customer_id){
         $stmt = $this->conn->prepare("
             SELECT f.name AS food_name, f.brand AS food_brand, m.meal_date
@@ -40,7 +48,8 @@ class ExamDao {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    //  Dodaje novog kupca (INSERT INTO customers)
+    //  Dodaje novog kupca (INSERT INTO customers),      Implement DAO method used to save customer data
+
     public function add_customer($data){
         $stmt = $this->conn->prepare("
             INSERT INTO customers (first_name, last_name, birth_date)
@@ -55,7 +64,8 @@ class ExamDao {
         return $data;
     }
 
-    //  Dohvata hranu sa podacima o nutrijentima (paginirano)
+    //  Dohvata hranu sa podacima o nutrijentima (paginirano),/** TODO
+     * Implement DAO method used to get foods report
     public function get_foods_report($limit, $offset){
         $stmt = $this->conn->prepare("
             SELECT name, brand, image, energy, protein, fat, fiber, carbs
