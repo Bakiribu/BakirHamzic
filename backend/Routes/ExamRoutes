@@ -1,27 +1,42 @@
 <?php
 require_once __DIR__."/services/ExamService.php";
 
-//  1. Test konekcije → /connection-check
+//  1. Test konekcije → /connection-check,This endpoint prints the message from constructor within ExamDao class
+    * Goal is to check whether connection is successfully established or not
+    * this endpoint does not have to return output in JSON format
+    *
+    */
 // Ovo se samo koristi da vidiš da li si uspješno povezan s bazom
 Flight::route('GET /connection-check', function(){
     $dao = new ExamDao();
 });
 
-//  2. Vrati sve kupce → /customers
+//  2. Vrati sve kupce → /customers,This endpoint returns list of all customers that will be used
+    * to populate the <select> list
 // Ovo se koristi npr. za <select> listu na frontendu
 Flight::route('GET /customers', function(){
     $service = new ExamService();
     Flight::json($service->get_customers());
 });
 
-//  3. Vrati jela jednog kupca → /customer/meals/2
+//  3. Vrati jela jednog kupca → /customer/meals/2,This endpoint returns array of all meals for a specific customer
+    * Every item in the array should have following properties
+    *   `food_name` -> name of the food that customer eat for the meal
+    *   `food_brand` -> brand of the food that customer eat for the meal
+    *   `meal_date` -> date when the customer eat the meal
 // Korisno kad želiš prikazati sve obroke za datog kupca
 Flight::route('GET /customer/meals/@customer_id', function($customer_id){
     $service = new ExamService();
     Flight::json($service->get_customer_meals($customer_id));
 });
 
-//  4. Dodaj novog kupca → /customers/add (POST)
+//  4. Dodaj novog kupca → /customers/add (POST),This endpoint should add the customer to the database
+    * The data that will come from the form (if you don't change
+    * the template form) has following properties
+    *   `first_name` -> first name of the customer
+    *   `last_name` -> last name of the customer
+    *   `birth_date` -> date when the customer has been born
+    * This endpoint should return the added customer in JSON format
 // Forma šalje podatke (ime, prezime, datum rođenja), ti ih upišeš u bazu
 Flight::route('POST /customers/add', function() {
     $service = new ExamService();
@@ -30,7 +45,18 @@ Flight::route('POST /customers/add', function() {
 });
 
 //  5. Izvještaj o hrani → /foods/report?page=1
-// Vrati 10 po stranici (ime, brend, slika, kalorije, proteini, masti…)
+This endpoint should return the array of all foods from the database
+    * together with the image of the foods. This endpoint should be fully
+    * paginated. Every food returned should have following properties:
+    *   `name` -> name of the food
+    *   `brand` -> brand of the food
+    *   `image` -> <img> of the food
+    *   `energy` -> total amount of calories (energy) of the food
+    *   `protein` -> total amount of proteins of the food
+    *   `fat` -> total amount of fat of the food
+    *   `fiber` -> total amount of fiber of the food
+    *   `carbs` -> total amount of carbs of the food
+    * This endpoint should return output in JSON format
 Flight::route('GET /foods/report', function(){
     $page = Flight::request()->query['page'] ?? 1;
     $pageSize = 10;
