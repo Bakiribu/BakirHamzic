@@ -12,23 +12,24 @@ class ExamService {
     * Implement service method to get all customers
     */
     public function get_customers() {
-        return $this->dao->get_all_customers();
+        return $this->dao->get_customers();
     }
 
     /** TODO
     * Implement service method to get all customer meals
     */
     public function get_customer_meals($customer_id) {
-        return $this->dao->get_meals_by_customer($customer_id);
+        return $this->dao->get_customer_meals($customer_id);
     }
 
     /** TODO
     * Implement service method to add customer to the database
     */
     public function add_customer($customer) {
-        $this->dao->insert_customer($customer);
-        return $customer; // vraćamo unesenog kupca kao potvrdu
-    }
+    $newId = $this->dao->add_customer($customer);
+    $customer['id'] = $newId;
+    return $customer; // vraćamo unesenog kupca kao potvrdu sa novim ID
+}
 
     /** TODO
     * Implement service method to return detailed list of foods
