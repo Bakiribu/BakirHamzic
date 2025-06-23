@@ -2,34 +2,39 @@
 require_once __DIR__."/../dao/ExamDao.php";
 
 class ExamService {
-    public $dao;
+    protected $dao;
 
-    //  Povezuje se s DAO-om (ovo se koristi u svakoj ruti)
     public function __construct(){
         $this->dao = new ExamDao();
     }
 
-    //  Samo prosljeđuje poziv da dohvati sve kupce, Implement service method to get all customers
-
-    public function get_customers(){
-        return $this->dao->get_customers();
+    /** TODO
+    * Implement service method to get all customers
+    */
+    public function get_customers() {
+        return $this->dao->get_all_customers();
     }
 
-    //  Prosljeđuje poziv da dohvati obroke jednog kupca, Implement service method to get all customer meals
-
-    public function get_customer_meals($customer_id){
-        return $this->dao->get_customer_meals($customer_id);
+    /** TODO
+    * Implement service method to get all customer meals
+    */
+    public function get_customer_meals($customer_id) {
+        return $this->dao->get_meals_by_customer($customer_id);
     }
 
-    //  Prosljeđuje poziv za dodavanje novog kupca,    * Implement service method to add customer to the database
-
-    public function add_customer($customer){
-        return $this->dao->add_customer($customer);
+    /** TODO
+    * Implement service method to add customer to the database
+    */
+    public function add_customer($customer) {
+        $this->dao->insert_customer($customer);
+        return $customer; // vraćamo unesenog kupca kao potvrdu
     }
 
-    // Prosljeđuje poziv za izvještaj o hrani sa paginacijom, Implement service method to return detailed list of foods
+    /** TODO
+    * Implement service method to return detailed list of foods
     * and total of nutrients for each food
-    public function foods_report($limit, $offset){
+    */
+    public function foods_report($limit, $offset) {
         return $this->dao->get_foods_report($limit, $offset);
     }
 }
