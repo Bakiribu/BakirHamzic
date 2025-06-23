@@ -1,81 +1,98 @@
 <?php
 
 class ExamDao {
-    public $conn;
 
-    //  Konstruktor: Povezivanje s bazom (radi se SAMO jednom),/** TODO
-           * List parameters such as servername, username, password, schema. Make sure to use appropriate port
-           */
+    private $conn;
 
-          /** TODO
-           * Create new connection
-           */
-    public function __construct(){
+    /**
+     * constructor of dao class
+     */
+    public function __construct() {
         try {
-            $host = 'localhost';
-            $dbname = 'your_database';
-            $port = 3306;
-            $username = 'root';
-            $password = '';
+            $host = "localhost";
+            $port = "3306";
+            $dbname = "your_database";  // IME BAZE
+            $username = "root";
+            $password = "";
 
             $this->conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "Connected successfully"; // vidi se na /connection-check
-        } catch(PDOException $e) {
+
+            echo "Connected successfully<br>";
+        } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
     }
 
-    //  Dohvata sve kupce iz tabele `customers`,     * Implement DAO method used to get customer information
+    /** TODO
+     * Implement DAO method used to get customer information
+     */
+   public function get_customers() {
+    $stmt = $this->conn->prepare("SELECT * FROM customers");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
-    public function get_customers(){
-        $stmt = $this->conn->prepare("SELECT * FROM customers");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    /** TODO
+     * Implement DAO method used to get customer meals
+     */
+    public function get_customer_meals($customer_id) {
+    $stmt = $this->conn->prepare("
+        SELECT 
+            f.name AS food_name, 
+            f.brand AS food_brand, 
+            m.meal_date
+        FROM meals m
+        JOIN meal_food mf ON m.id = mf.meal_id
+        JOIN foods f ON mf.food_id = f.id
+        WHERE m.customer_id = :customer_id
+    ");
+    
+    $stmt->execute(['customer_id' => $customer_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
-    //  Dohvata obroke za jednog kupca — koristi JOIN između meals i foods,     * Implement DAO method used to get customer meals
+    /** TODO
+     * Implement DAO method used to save customer data
+     */
+    public function add_customer($data) {
+    $stmt = $this->conn->prepare("
+        INSERT INTO customers (first_name, last_name, birth_date)
+        VALUES (:first_name, :last_name, :birth_date)
+    ");
 
-    public function get_customer_meals($customer_id){
-        $stmt = $this->conn->prepare("
-            SELECT f.name AS food_name, f.brand AS food_brand, m.meal_date
-            FROM meals m
-            JOIN foods f ON m.food_id = f.id
-            WHERE m.customer_id = :id
-        ");
-        $stmt->bindParam(':id', $customer_id);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $stmt->execute([
+        'first_name' => $data['first_name'],
+        'last_name' => $data['last_name'],
+        'birth_date' => $data['birth_date']
+    ]);
+     return $this->conn->lastInsertId();
+}
 
-    //  Dodaje novog kupca (INSERT INTO customers),      Implement DAO method used to save customer data
-
-    public function add_customer($data){
-        $stmt = $this->conn->prepare("
-            INSERT INTO customers (first_name, last_name, birth_date)
-            VALUES (:first_name, :last_name, :birth_date)
-        ");
-        $stmt->bindParam(':first_name', $data['first_name']);
-        $stmt->bindParam(':last_name', $data['last_name']);
-        $stmt->bindParam(':birth_date', $data['birth_date']);
-        $stmt->execute();
-
-        $data['id'] = $this->conn->lastInsertId(); // dodaj ID u povratni rezultat
-        return $data;
-    }
-
-    //  Dohvata hranu sa podacima o nutrijentima (paginirano),/** TODO
+    /** TODO
      * Implement DAO method used to get foods report
-    public function get_foods_report($limit, $offset){
-        $stmt = $this->conn->prepare("
-            SELECT name, brand, image, energy, protein, fat, fiber, carbs
-            FROM foods
-            LIMIT :limit OFFSET :offset
-        ");
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+     */
+    public function get_foods_report($limit, $offset) {
+    $stmt = $this->conn->prepare("
+        SELECT 
+            name, 
+            brand, 
+            image, 
+            energy, 
+            protein, 
+            fat, 
+            fiber, 
+            carbs
+        FROM foods
+        LIMIT :limit OFFSET :offset
+    ");
+
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+    
 }
 ?>
