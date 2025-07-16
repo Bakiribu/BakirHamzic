@@ -9,32 +9,37 @@ class ExamService {
     }
 
     /** TODO
-    * Implement service method to get all customers
+    * Implement service method used to get employees performance report
     */
-    public function get_customers(){
-        return $this->dao->get_customers();
+    public function employees_performance_report(){
+        return $this->dao->employees_performance_report();
     }
 
     /** TODO
-    * Implement service method to get all customer meals
+    * Implement service method used to delete employee by id
     */
-    public function get_customer_meals($customer_id){
-        return $this->dao->get_customer_meals($customer_id);
+    public function delete_employee($employee_id){
+        return $this->dao->delete_employee($employee_id);
     }
 
     /** TODO
-    * Implement service method to add customer to the database
+    * Implement service method used to edit employee data
     */
-    public function add_customer($customer){
-        return $this->dao->add_customer($customer);
+    public function edit_employee($employee_id, $data){
+        return $this->dao->edit_employee($employee_id, $data);
     }
 
     /** TODO
-    * Implement service method to return detailed list of foods
-    * and total of nutrients for each food
+    * Implement service method used to get orders report
     */
-    public function foods_report(){
-        return $this->dao->get_foods_report();
+    public function get_orders_report(){
+        return $this->dao->get_orders_report();
+    }
+
+    /** TODO
+    * Implement service method used to get all products in a single order
+    */
+    public function get_order_details($order_id){
+        return $this->dao->get_order_details($order_id);
     }
 }
-?>
