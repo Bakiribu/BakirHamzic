@@ -1,111 +1,133 @@
 <?php
 
-class ExamDao {
+class ExamDao
+{
 
-    private $conn;
-    
+  private $conn;
 
-    /**
-     * constructor of dao class
-     */
-    public function __construct(){
-      
-        try {
-          /** TODO
-           * List parameters such as servername, username, password, schema. Make sure to use appropriate port
-           */
+  /**
+   * constructor of dao class
+   */
+  public function __construct()
+  {
+    try {
+      /** TODO
+       * List parameters such as servername, username, password, schema. Make sure to use appropriate port
+       */
+       $host = 'db1.ibu.edu.ba';
+       $dbName = 'webfinal_db_3006';
+       $username = 'webfinal_db_user2';
+       $password = 'webFinal3006';
+       $port = 3306;
 
-           $host = 'localhost';
-           $port = '3306';
-           $db = 'webfinal';
-           $user = 'root';
-           $password = 'harkeking333';
-
-          
-
-          /** TODO
-           * Create new connection
-           */
-
-           $this->conn = new PDO(
-              "mysql:host=" . $host . ";dbname=" . $db . ";port=" . $port,
-              $user,
-              $password,
-              [
+      /** TODO
+       * Create new connection
+       */
+      $this->conn = new PDO(
+            "mysql:host=" . $host . ";port=" . $port . ";dbname=" . $dbName,
+            $username,
+            $password,
+            [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-              ]
-           );
-
+            ]
+          );
           echo "Connected successfully";
         } catch(PDOException $e) {
-          echo "Connection failed: " . $e->getMessage();
+          echo "conn failed: " . $e->getMessage();
         }
-    }
+  }
 
-    /** TODO
-     * Implement DAO method used to get customer information
-     */
-    public function get_customers(){
-      $stmt = $this->conn->prepare("SELECT * FROM customers");
-      $stmt->execute();
-      return $stmt->fetchAll();
-    }
+  /** TODO
+   * Implement DAO method used to get employees performance report
+   */
+  public function employees_performance_report() {
+    $stmt = $this->conn->prepare("
+      SELECT 
+        e.employeeNumber as id,
+        CONCAT(e.firstName, ' ', e.lastName) as full_name,
+        e.email,
+        COALESCE(SUM(p.amount), 0) as total
+      FROM employees e
+      LEFT JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
+      LEFT JOIN payments p ON c.customerNumber = p.customerNumber
+      GROUP BY e.employeeNumber, e.firstName, e.lastName, e.email
+      ORDER BY total DESC
+    ");
+    $stmt->execute();
+    return $stmt->fetchAll();
+  }
 
-    /** TODO
-     * Implement DAO method used to get customer meals
-     */
-    public function get_customer_meals($customer_id) {
-      $stmt = $this->conn->prepare("
-        SELECT f.name AS food_name,
-               f.brand AS food_brand,
-               m.created_at AS meal_date
-        FROM meals m
-        JOIN foods f ON m.food_id = f.id 
-        WHERE m.customer_id = :customer_id
-      ");
-      $stmt->execute(['customer_id' => $customer_id]);
-      return $stmt->fetchAll();
-    }
+  /** TODO
+   * Implement DAO method used to delete employee by id
+   */
+  public function delete_employee($employee_id) {
+    $stmt = $this->conn->prepare("DELETE FROM employees WHERE employeeNumber = ?");
+    $stmt->execute([$employee_id]);
+    return $stmt->rowCount() > 0;
+  }
 
-    /** TODO
-     * Implement DAO method used to save customer data
-     */
-    public function add_customer($data){
-      $stmt = $this->conn->prepare("
-      INSERT INTO customers (first_name, last_name, birth_date)
-      VALUES (:first_name, :last_name, :birth_date)
-      ");
+  /** TODO
+   * Implement DAO method used to edit employee data
+   */
+  public function edit_employee($employee_id, $data) {
+    $stmt = $this->conn->prepare("
+      UPDATE employees 
+      SET firstName = ?, lastName = ?, email = ?
+      WHERE employeeNumber = ?
+    ");
+    $stmt->execute([
+      $data['first_name'],
+      $data['last_name'], 
+      $data['email'],
+      $employee_id
+    ]);
+    
+    $stmt = $this->conn->prepare("
+      SELECT employeeNumber, firstName, lastName, email 
+      FROM employees 
+      WHERE employeeNumber = ?
+    ");
+    $stmt->execute([$employee_id]);
+    return $stmt->fetch();
+  }
 
-      $stmt->execute([
-        'first_name' => $data['first_name'],
-        'last_name' => $data['last_name'],
-        'birth_date' => $data['birth_date']
-      ]);
+  /** TODO
+   * Implement DAO method used to get orders report
+   */
+  public function get_orders_report() {
+    $stmt = $this->conn->prepare("
+      SELECT 
+        o.orderNumber as order_number,
+        SUM(od.quantityOrdered * od.priceEach) as total_amount,
+        CONCAT(
+          '<button class=\"btn btn-info\" onclick=\"showOrderDetails(', o.orderNumber, ')\">',
+          'Details</button>'
+        ) as details
+      FROM orders o
+      INNER JOIN orderdetails od ON o.orderNumber = od.orderNumber
+      GROUP BY o.orderNumber
+      ORDER BY o.orderNumber
+    ");
+    $stmt->execute();
+    return $stmt->fetchAll();
+  }
 
-      $data['id'] = $this->conn->lastInsertId();
-      return $data;
-    }
-
-    /** TODO
-     * Implement DAO method used to get foods report
-     */
-    public function get_foods_report(){
-     $stmt = $this->conn->prepare("
-      SELECT f.name,
-             f.brand,
-             CONCAT('<img src=\"', f.image_url, '\" width=\"100\"/>') AS image,
-            (SELECT quantity FROM food_nutrients fn JOIN nutrients n ON fn.nutrient_id = n.id WHERE fn.food_id = f.id AND n.name = 'Energy' LIMIT 1) AS energy,
-            (SELECT quantity FROM food_nutrients fn JOIN nutrients n ON fn.nutrient_id = n.id WHERE fn.food_id = f.id AND n.name = 'Protein' LIMIT 1) AS protein,
-            (SELECT quantity FROM food_nutrients fn JOIN nutrients n ON fn.nutrient_id = n.id WHERE fn.food_id = f.id AND n.name = 'Fat' LIMIT 1) AS fat,
-            (SELECT quantity FROM food_nutrients fn JOIN nutrients n ON fn.nutrient_id = n.id WHERE fn.food_id = f.id AND n.name = 'Fiber' LIMIT 1) AS fiber,
-            (SELECT quantity FROM food_nutrients fn JOIN nutrients n ON fn.nutrient_id = n.id WHERE fn.food_id = f.id AND n.name = 'Carb' LIMIT 1) AS carbs
-      FROM foods f
-      LIMIT 50
-     ");
-
-     $stmt->execute();
-     return $stmt->fetchAll();
-    }
+  /** TODO
+   * Implement DAO method used to get all products in a single order
+   */
+  public function get_order_details($order_id) {
+    $stmt = $this->conn->prepare("
+      SELECT 
+        p.productName as product_name,
+        od.quantityOrdered as quantity,
+        od.priceEach as price_each
+      FROM orderdetails od
+      INNER JOIN products p ON od.productCode = p.productCode
+      WHERE od.orderNumber = ?
+      ORDER BY p.productName
+    ");
+    $stmt->execute([$order_id]);
+    return $stmt->fetchAll();
+  }
 }
-?>
