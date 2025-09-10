@@ -1,1 +1,7 @@
+Host: db1.ibu.edu.ba
+Database: webfinalmakeup_db_1507
+User: webfinalmup_db_user2
+Password: webFinMup1507
+Port: 3306
 
+RULES:
