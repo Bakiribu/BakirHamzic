@@ -1,1 +1,2 @@
 # Tracking-expenses-App, 2025
+A backend application for tracking and managing expenses. The application allows users to manage expenses, categories, employees, offices, and items. It uses a database to store and manage the data and includes CRUD operations for creating, viewing, updating, and deleting records. The project was developed to practice backend development, database management, and working with different application layers.
